@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Gladiator</title>
+    <link rel="stylesheet" href="/static/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.5/dist/socket.io.min.js"></script>
+</head>
+</head>
+<body>
+    <ul>
+        <li><a>agladiator</a></li>
+        <li class="dropdown">
+            <a href="#play" class="dropbtn">Play</a>
+            <div class="dropdown-content">
+                <a href="{{ url_for('templates.index') }}">Arena</a>
+                <a href="{{ url_for('tournament.list_tournaments') }}">Join a Tournament</a>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#community" class="dropbtn">Community</a>
+            <div class="dropdown-content">
+                <a href="#">Players</a>
+                <a href="#">Leaderboard</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="#about">About</a></li>
+        <li style="float:right">
+            {% if session.username %}
+                <a class="welcome">Welcome, {{ session.username }}</a>
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
+        </li>
+    </ul>
+    <div class="main">
+        <div class="right-panel">
+            <form method = "POST" action = "{{ url_for('templates.find_match')}}">  
+                <button class="button" type = "submit">1 + 0 <br>lightning</br></button>
+            </form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <script>
+        let socket = io();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+
+            socket.on('connect', function() {
+            // Optionally, you can emit an event to join game or user room if needed
+            });
+
+            socket.on('match_ready', function(data) {
+            // Redirect to the game page when match is ready
+            if (data.match_id) {
+                window.location.href = '/game/' + data.match_id;
+            }
+            });
+        });
+    </script>
+</body> 
+</html>

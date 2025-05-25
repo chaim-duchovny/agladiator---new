@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Gladiator</title>
+    <link rel="stylesheet" href="/static/register.css">
+</head>
+<body>
+    <ul>
+        <li><a>agladiator</a></li>
+        <li class="dropdown">
+            <a href="#play" class="dropbtn">Play</a>
+            <div class="dropdown-content">
+                <a href="#">Gladiator's Arena</a>
+                <a href="#">Join a Tournament</a>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#community" class="dropbtn">Community</a>
+            <div class="dropdown-content">
+                <a href="#">Players</a>
+                <a href="#">Artificial Gladiator League</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="#about">About</a></li>
+        <li style="float:right">
+            {% if session.username %}
+                <a class="welcome">Welcome, {{ session.username }}</a>
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
+        </li>
+    </ul>
+    <div class = "form-group">
+        <form id="registration-form" method="POST" action="{{ url_for('auth.register') }}" enctype="multipart/form-data">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br><br>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashes">
+                         {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            <span id="email-error" class="error"></span>
+
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password"><br><br>
+            <span id="password-error" class="error"></span>
+
+            <label for="confirm-password">Confirm Password:</label><br>
+            <input type="password" id="confirm-password" name="confirm-password"><br><br>
+
+            <label for="agentFile">Upload AI Agent (Python file):</label><br>
+            <input type="file" name="agentFile" id="agentFile" accept=".py" required><br><br>
+            <div id="result"></div>
+                
+            <input  type="submit" value="Register">
+        </form>
+    </div>
+</body>
+</html>
+

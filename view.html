@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="tournament-container">
+    <h1>{{ tournament.name }}</h1>
+    <p class="tournament-description">{{ tournament.description }}</p>
+    
+    <div class="tournament-info">
+        <div class="info-box">
+            <h3>Status</h3>
+            <p>{{ tournament.status|capitalize }}</p>
+        </div>
+        <div class="info-box">
+            <h3>Participants</h3>
+            <p>{{ registered }}/2048</p>
+        </div>
+        <div class="info-box">
+            <h3>Start Date</h3>
+            <p>{{ tournament.start_date }}</p>
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar" style="width: {{ progress }}%">
+            {{ progress|round(1) }}%
+        </div>
+    </div>
+
+    {% if tournament.status == 'upcoming' %}
+    <form method="POST" action="{{ url_for('tournament.register_for_tournament', tournament_id=tournament.id) }}">
+        <button type="submit" class="btn-register">
+            {% if registered >= 2048 %}Waiting List{% else %}Register Now{% endif %}
+        </button>
+    </form>
+    {% endif %}
+
+    <h2>Participants</h2>
+    <div class="participants-grid">
+        {% for participant in participants %}
+        <div class="participant-card">
+            <div class="participant-elo">{{ participant.elo }}</div>
+            <div class="participant-name">{{ participant.username }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

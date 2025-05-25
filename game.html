@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI vs AI Go Match</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5dc;
+            color: #222;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 40px;
+        }
+        .players, .controls, .history {
+            flex: 1;
+        }
+        .players {
+            min-width: 180px;
+        }
+        .controls {
+            min-width: 180px;
+        }
+        .history {
+            min-width: 200px;
+        }
+        #go-board {
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+        .player-block {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0f0e0;
+            border-radius: 8px;
+        }
+        .player-block span {
+            font-weight: bold;
+        }
+        .status {
+            margin: 10px 0;
+            font-size: 1.1em;
+            color: #444;
+        }
+        button {
+            margin: 6px 0;
+            padding: 8px 16px;
+            font-size: 1em;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #555;
+        }
+        #move-history {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 0.97em;
+        }
+        .current-player {
+            font-weight: bold;
+            color: #007700;
+        }
+        .game-over {
+            color: #a00;
+            font-weight: bold;
+        }
+    </style>
+    <!-- WGo.js loaded from CDN to ensure WGo is defined -->
+    <script src="{{ url_for('static', filename='wgo/wgo.min.js') }}"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.5/dist/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="players">
+            <div class="player-block">
+                <span>{{ player1_name }}</span><br>
+                ELO: {{ player1_elo }}<br>
+                <span>Black (Player 1)</span>
+            </div>
+            <div class="player-block">
+                <span>{{ player2_name }}</span><br>
+                ELO: {{ player2_elo }}<br>
+                <span>White (Player 2)</span>
+            </div>
+            <div class="status" id="status-text">Status: Connecting...</div>
+            <div class="status" id="current-player-text"></div>
+            <div class="status game-over" id="game-over-text"></div>
+        </div>
+        <div>
+            <div id="go-board"></div>
+            <div class="controls">
+                <button id="next-move-btn">Next Move</button><br>
+                <button id="auto-play-btn">Start Auto Play</button><br>
+                <button id="refresh-board-btn">Refresh Board</button><br>
+                <button id="end-game-btn">End Game</button>
+            </div>
+        </div>
+        <div class="history">
+            <div><strong>Match ID:</strong> {{ match_id }}</div>
+            <div><strong>Move History</strong></div>
+            <div id="move-history"></div>
+        </div>
+    </div>
+
+<script>
+    let socket = io();
+    document.addEventListener('DOMContentLoaded', function() {
+        const BOARD_SIZE = 19;
+        let board = null;
+        let autoPlay = false;
+        let autoPlayInterval = null;
+        let currentPlayer = 1; // 1: Black, 2: White
+
+        // Initialize WGo.js board
+        function createBoard() {
+            if (board) {
+                board.removeAllObjects(); // Clear stones
+                board.kill(); // Proper cleanup (WGo.js method)
+            }
+            board = new WGo.Board(document.getElementById("go-board"), {
+                width: 600,
+                section: { top:0, left:0, right:0, bottom:0 }
+            });
+            }
+            createBoard();
+
+        // Join the game room
+        socket.emit('join_game', { match_id: "{{ match_id }}" });
+
+        // Request initial board state
+        socket.emit('request_board_state', { match_id: "{{ match_id }}" });
+
+        // --- Board Update Handler ---
+        socket.on('board_update', function(data) {
+            if (data.board) updateBoard(data.board);
+            if (typeof data.current_player !== 'undefined') updateCurrentPlayer(data.current_player);
+            if (typeof data.move_history !== 'undefined') updateMoveHistory(data.move_history);
+            updateStatus(data);
+            if (data.game_over) {
+                stopAutoPlay();
+                document.getElementById('game-over-text').textContent = data.result_message || "Game Over";
+            } else {
+                document.getElementById('game-over-text').textContent = "";
+            }
+            if (data.game_over) {
+                    let winnerMsg = '';
+                    if (data.winner === 1) {
+                        winnerMsg = 'Winner: {{ player1_name }} (Black)';
+                    } else if (data.winner === 2) {
+                        winnerMsg = 'Winner: {{ player2_name }} (White)';
+                    } else {
+                        winnerMsg = "It's a draw!";
+                    }
+                    document.getElementById('winner-message').innerHTML = '<h2>' + winnerMsg + '</h2>';
+                }
+        });
+
+        // --- Error Handler ---
+        socket.on('error', function(data) {
+            document.getElementById('status-text').textContent = data.message || "Error";
+        });
+
+        // --- Helper Functions ---
+        function updateBoard(boardArray) {
+            if (!board) return;
+            board.removeAllObjects();
+            console.log(boardArray)
+            for (let y = 0; y < BOARD_SIZE; y++) {
+                for (let x = 0; x < BOARD_SIZE; x++) {
+                    if (boardArray[y][x] === 1) {
+                        board.addObject({ x: x, y: y, c: WGo.B });
+                    } else if (boardArray[y][x] === 2) {
+                        board.addObject({ x: x, y: y, c: WGo.W });
+                    }
+                }
+            }
+        }
+
+        function updateCurrentPlayer(player) {
+            currentPlayer = player;
+            let text = player === 1 ? "Current player: Black" : "Current player: White";
+            document.getElementById('current-player-text').textContent = text;
+        }
+
+        function updateMoveHistory(moveHistory) {
+            const moveDiv = document.getElementById('move-history');
+            if (!moveHistory) {
+                moveDiv.textContent = "No moves yet.";
+                return;
+            }
+            let html = "";
+            if (Array.isArray(moveHistory)) {
+                if (moveHistory.length === 0) {
+                    moveDiv.textContent = "No moves yet.";
+                    return;
+                }
+                moveHistory.forEach((move, idx) => {
+                    if (move && typeof move === 'object') {
+                        html += `<div>Move ${idx+1}: ${move.player === 1 ? "Black" : "White"} (${move.x+1}, ${move.y+1})</div>`;
+                    }
+                });
+            } else if (typeof moveHistory === 'object' && moveHistory !== null) {
+                // If moveHistory is just the last move
+                html += `<div>Move ${moveHistory.move_number}: ${moveHistory.player === 1 ? "Black" : "White"} (${moveHistory.x+1}, ${moveHistory.y+1})</div>`;
+            }
+            moveDiv.innerHTML = html;
+        }
+
+        function updateStatus(data) {
+            let status = "Match in progress";
+            if (data.game_over) {
+                status = "Game Over";
+            }
+            document.getElementById('status-text').textContent = status;
+        }
+
+        // --- Button Handlers ---
+        document.getElementById('next-move-btn').onclick = function() {
+            fetch(`/game/next_move?match_id={{ match_id }}`) 
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('status-text').textContent = data.error;
+                    }
+                });
+        };
+
+        document.getElementById('refresh-board-btn').onclick = function() {
+            socket.emit('request_board_state', { match_id: "{{ match_id }}" });
+        };
+
+        document.getElementById('end-game-btn').onclick = function() {
+            fetch(`/game/end?match_id={{ match_id }}`, { method: "POST" })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('game-over-text').textContent = "Game ended.";
+                    } else if (data.error) {
+                        document.getElementById('status-text').textContent = data.error;
+                    }
+                });
+        };
+
+        document.getElementById('auto-play-btn').onclick = function() {
+            if (!autoPlayInterval) {
+                autoPlayInterval = setInterval(() => { // Assignment without redeclaration
+                    fetch(`/game/next_move?match_id={{ match_id }}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.game_over) stopAutoPlay();
+                    })
+                    .catch(error => {
+                        console.error('Auto-play error:', error);
+                        stopAutoPlay();
+                    });
+                }, 1200);
+            }
+        };
+
+
+        function stopAutoPlay() {
+            autoPlay = false;
+            document.getElementById('auto-play-btn').textContent = "Start Auto Play";
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+        }
+
+        // --- Responsive Board Redraw ---
+        window.addEventListener('resize', function() {
+            socket.emit('request_board_state', { match_id: "{{ match_id }}" });
+        });
+        {% if winner is not none %}
+            <div id="winner-message">
+                {% if winner == 1 %}
+                    <h2>Winner: {{ player1_name }} (Black)</h2>
+                {% elif winner == 2 %}
+                    <h2>Winner: {{ player2_name }} (White)</h2>
+                {% else %}
+                    <h2>It's a draw!</h2>
+                {% endif %}
+            </div>
+        {% endif %}
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Gladiator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="home.js"></script>
+    <link rel="stylesheet" href="/static/home.css">
+</head>
+<body>
+    <div class="main">
+        <div class="first">
+            <h1 id="name1">aGladiator</h1>
+        </div>
+        <div class="img">
+            <img id="img" src="/static/AI.jpg" alt="AI" style="max-width: 100%; height: auto;">
+        </div>
+        <div class="second">
+            <h1 id="name2">Home for Artificial Gladiators</h1>
+        </div>
+        <div class="email">
+            <form id="subscribeForm" action="home.html" method="POST">
+                <input type="email" id="email_field" placeholder="Enter your email" name="email" required>
+                <input type="submit" id="submit_button" value="Subscribe" name="submit" >
+            </form>
+            <div id="message"></div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+</body>
+</html>

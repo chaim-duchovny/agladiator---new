@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/list.css">
+<div class = "container">
+    <h1 style="color: white">Tournaments</h1>
+
+    <a href="{{ url_for('tournament.create_tournament') }}" class="btn btn-primary">Create New Tournament</a>
+
+    <div class="tournaments-list">
+        {% if tournaments %}
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>Participants</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tournament in tournaments %}
+                    <tr>
+                        <td>{{ tournament.name }}</td>
+                        <td>{{ tournament.status }}</td>
+                        <td>{{ tournament.start_date }}</td>
+                        <td>{{ tournament.participant_count }}/{{ tournament.max_participants }}</td>
+                        <td>
+                            <a href="{{ url_for('tournament.view_tournament', tournament_id=tournament.id) }}" class="btn btn-sm btn-info">View</a>
+                            {% if tournament.id not in user_tournaments and tournament.status == 'upcoming' and tournament.participant_count < tournament.max_participants %}
+                                <form method="POST" action="{{ url_for('tournament.register_for_tournament', tournament_id=tournament.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">Register</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="mt-4">No tournaments available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

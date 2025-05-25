@@ -1,0 +1,108 @@
+  body {
+    background-color: black;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  li {
+    float: left;
+  }
+
+  li a, .dropbtn {
+  display: inline-block;
+  color: white;
+  text-align: left;
+  padding: 14px 16px;
+  text-decoration: none;
+  }
+
+  li a:hover, .dropdown:hover .dropbtn {
+    background-color: rgb(70, 70, 70);
+  }
+
+  li.dropdown {
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    background-color: rgb(70, 70, 70);
+    color: grey;
+    padding: 12px 12px;
+    font-size: 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #1a16ec;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+.form-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 60px);
+}
+
+#registration-form {
+  background-color: rgba(70, 70, 70, 0.8);
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Additional styles for form elements */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-group input[type="submit"] {
+  width: 100%;
+  background-color: #1a16ec;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-group label {
+  color: #f1f1f1;
+}
+
+.error {
+  color: red;
+  margin-top: 5px;
+}
+
+.success {
+  color: green;
+  margin-top: 5px;
+}

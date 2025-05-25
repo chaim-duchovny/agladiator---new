@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="create-tournament-container">
+    <h1>Create New Tournament</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Tournament Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            <input type="datetime-local" id="start_date" name="start_date" required>
+        </div>
+        
+        <input type="hidden" name="max_participants" value="2048">
+        
+        <button type="submit" class="btn-create">Create Tournament</button>
+    </form>
+</div>
+{% endblock %}
+

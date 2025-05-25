@@ -1,0 +1,123 @@
+  body {
+    background-color: black;
+  }
+
+  .topnav {
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: -10px;
+  }
+  
+  .split {
+    float: right;
+  }
+  
+  .dropbtn {
+    background-color: black;
+    color: grey;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    background-color: rgb(70, 70, 70);
+    color: grey;
+    padding: 12px 12px;
+    font-size: 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #1a16ec;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  .dropdown:hover .dropbtn {
+    background-color: rgb(70, 70, 70);
+  }
+  
+  #main {
+    display: flex;
+    flex-direction: row;
+    padding: 40px;
+    gap: 60px;
+  }
+
+  #top-message {
+    position: fixed;
+    min-height: 40px;      /* Reserve enough space for your message */
+    color: white;
+    margin-left: 400px;  /* Vertically center the text */
+    justify-content: center;
+  }
+
+  #top-message.hidden {
+    visibility: hidden;    /* Hide message but keep space */
+  }
+
+  #board {
+    width: auto; 
+    left: 10%;
+    top: 10%;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: 10px;
+    margin-top: 80px;
+  }
+
+  #left-panel {
+    position: relative;
+    display: flex;
+    width: 1000px;
+    margin-left: 150px;
+  }
+
+  #right-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 400px;
+    margin-top: 200px;
+  }
+
+  #move-history {
+    color: white;
+    margin-bottom: 20px;
+    height: 500px;
+    width: 600px; /* Set a fixed width */
+    background-color: #333;
+    overflow-y: scroll;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  #find-match {
+    background-color: #ffee00;
+    font-size: 1.2em;
+    width: 200px;
+    margin-left: 200px;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 10px 0;
+  }
+
+  

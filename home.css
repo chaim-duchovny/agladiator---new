@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.first {
+    text-align: center;
+    margin-top: 5vh;
+}
+
+#name1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 5vw + 1rem, 3.5rem);
+    font-weight: 700;
+    color: rgb(0, 217, 255);
+    text-shadow: 0 0 10px rgba(78, 204, 163, 0.7);
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 1px #4ecca3, 0 0 5px #4ecca3; }
+    to { text-shadow: 0 0 5px #4ecca3, 0 0 20px #4ecca3; }
+}
+
+.img {
+    text-align: center;
+    margin-top: 5vh;
+    width: 100%;
+    max-width: 600px;
+}
+
+#img {
+    border-radius: 10px;
+    max-width: 100%;
+    height: auto;
+}
+
+.second {
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.1);
+    margin-top: 5vh;
+}
+
+.second #name2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 4vw + 0.5rem, 2.5rem);
+    text-align: center;
+    color: rgb(0, 217, 255);
+    word-wrap: break-word;
+}
+
+.email {
+    text-align: center;
+    margin-top: 5vh;
+    width: 100%;
+    max-width: 400px;
+}
+
+#email_field {
+    background-color: beige;
+    border-color: rgb(0, 217, 255);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 250px;
+    height: 50px;
+    padding: 0 10px;
+    margin-bottom: 10px;
+}
+
+input::placeholder {
+    text-align: center;
+    font-size: 1rem;
+    font-family: 'Orbitron', sans-serif;
+}
+
+input:focus::placeholder {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#submit_button {
+    background-color: rgb(0, 217, 255);
+    border-radius: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    width: 100%;
+    max-width: 120px;
+    height: 55px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 480px) {
+    .email {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #email_field, #submit_button {
+        max-width: 100%;
+    }
+    
+    #submit_button {
+        margin-top: 10px;
+    }
+}
+
+#message {
+    margin-top: 10px;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+}
