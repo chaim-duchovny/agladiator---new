@@ -86,7 +86,32 @@ def initialize_socketio(socketio):
             emit('board_update', board_data)
         else:
             emit('error', {'message': 'Game not found'})
-    
+
+    @socketio.on('updateClock')
+    def handle_clock(data):
+        match_id = data['match_id']
+        player = data['player']
+        minutes = data['minutes']
+        seconds = data['seconds']
+
+        # Import here to avoid circular imports
+        from .game_controller import active_games
+        
+        # Update match state
+        game = active_games.get(match_id)
+        if game:
+            if player == 1:
+                game.player1_time = (minutes, seconds)
+            else:
+                game.player2_time = (minutes, seconds)
+            
+            # Broadcast to all players
+            emit('clock_update', {
+                'player': player,
+                'minutes': minutes,
+                'seconds': seconds
+            }, room=f"game_{match_id}")
+
     @socketio.on('disconnect')
     def handle_disconnect():
         """Handle client disconnect"""
