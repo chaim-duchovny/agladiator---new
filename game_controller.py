@@ -5,12 +5,11 @@ from flask import Blueprint, jsonify, render_template, session, redirect, url_fo
 from flask import current_app
 import mysql.connector
 import numpy as np
+from .game_state import active_games
+from .events_common import broadcast_board_update, broadcast_clock_update
 
 # Create game blueprint
 bp_game = Blueprint('game', __name__, url_prefix='/game')
-
-# Store active games in memory
-active_games = {}
 
 class GoGame:
     """Class to manage a Go game between two AI agents"""
@@ -165,9 +164,9 @@ class GoGame:
 
         # Broadcast the move to all players in the game
         try:
-            from .game_events import broadcast_board_update
             if hasattr(current_app, 'socketio'):
                 broadcast_board_update(current_app.socketio, self.match_id, self)
+                broadcast_clock_update(current_app.socketio, self.match_id, self.current_player)
         except Exception as e:
             print(f"Error broadcasting move: {e}")
 
